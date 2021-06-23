@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, pipe } from 'rxjs';
 import { HEROES } from '../data/mock-heroes';
@@ -14,6 +14,10 @@ export class HeroService {
   // defining the heroesUrl of the form ':base/:collectionName' with the address of the heroes
   // resource on the server. Here 'base' is the resource to which requests are made, and 
   // 'collectionName' is the heroes data object in the 'in-memory-data-service.ts'
+
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
 
   constructor(private messageSvc: MessageService,
               private http: HttpClient) { }
@@ -78,6 +82,38 @@ export class HeroService {
   Instead of handling the error directly, it returns an error handler function to 'catchError'
   that it has configured with both the name of the operation that failed and a safe return value
   */
+
+  // UPDATE HEROES
+  updateHero(hero: Hero): Observable<any> {
+    return this.http.put(this.heroesUrl, hero, this.httpOptions)
+    .pipe(tap( _ => this.log( `update hero id = ${hero.id}`)),
+    catchError(this.handleError<any>('updateHero'))
+    );
+  }
+
+  // add hero
+  // POST: add a new hero to the server
+  addHero(hero: Hero): Observable<Hero> {
+    return this.http.post<Hero>(this.heroesUrl, hero, this.httpOptions).pipe(
+      tap((newHero: Hero) => this.log(`added hero w/ id=${newHero.id}`)),
+      catchError(this.handleError<Hero>('addHero'))
+    );
+  }
+  /* addHero() differs from updateHero():
+  - it calls HttpClient.post() instead of put()
+  - it expects the server to generate an id for the new hero, 
+    which it returns in the Observable<Hero> to the caller.
+  */
+
+
+  deleteHero(id: number): Observable<Hero> {
+    const url = `${this.heroesUrl}/${id}`;
+
+    return this.http.delete<Hero>(url, this.httpOptions)
+    .pipe(tap(_ => this.log(`Deleted hero id=${id}`)),
+    catchError(this.handleError<Hero>('deleteHero'))
+    );
+  }
   
 }
 
