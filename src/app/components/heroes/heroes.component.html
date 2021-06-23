@@ -11,12 +11,12 @@
     </button>
   </div>
 
-<ul class="heroes">
-  <li *ngFor="let hero of heroes">
-    <a routerLink="/detail/{{hero.id}}">
-      <span class="badge">{{hero.id}}</span> {{hero.name}}
-    </a>
-    <button class="delete" title="Delete Hero"
-    (click)="delete(hero)">x</button>
-  </li>
-</ul>
+  <ul class="heroes">
+    <li *ngFor="let hero of heroes">
+      <a routerLink="/detail/{{hero.id}}">
+        <span class="badge">{{hero.id}}</span> {{hero.name}}
+      </a>
+      <button class="delete" title="Delete Hero"
+      (click)="delete(hero)">x</button>
+    </li>
+  </ul>
